@@ -2,16 +2,66 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import WebFont from 'webfontloader';
+import Contenedor from './elements/Contenedor';
+import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import EditarGasto from './components/EditarGasto';
+import GastosPorCategoria from './components/GastosPorCategoria';
+import ListaDeGastos from './components/ListaDeGastos';
+import Login from './components/Login';
+import Register from './components/Register';
+import {Helmet} from 'react-helmet';
+import favicon from './images/logo.png';
+import Fondo from './elements/Fondo';
+import {ProviderAuth} from './context/AuthContext';
+import RutaPrivada from './components/RutaPrivada';
+import {TotalGastadoProvider} from './context/totalGastadoDelMesContext';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+//Work+Sans:wght@400;500;700
+WebFont.load({
+  google: {
+    families: ['Work Sans: 400, 500, 700', 'sans-serif']
+  }
+});
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const Index = () => {
+  return (
+    <>
+      <Helmet>
+        <link rel="shortcut icon" href={favicon} type="image/x-icon" />
+      </Helmet>
+
+      <ProviderAuth>     
+        <TotalGastadoProvider>
+          <BrowserRouter>
+            <Contenedor>
+              <Switch>
+                <Route path="/iniciar-sesion" component={Login} />
+                <Route path="/crear-cuenta" component={Register} />
+
+                <RutaPrivada path="/categorias">
+                  <GastosPorCategoria />
+                </RutaPrivada>
+
+                <RutaPrivada path="/lista">
+                  <ListaDeGastos />
+                </RutaPrivada>
+
+                <RutaPrivada path="/editar/:id">
+                  <EditarGasto />
+                </RutaPrivada>
+
+                <RutaPrivada path="/">
+                  <App />
+                </RutaPrivada>
+              </Switch>
+            </Contenedor>
+          </BrowserRouter>
+        </TotalGastadoProvider>   
+      </ProviderAuth>
+      <Fondo/>
+    </>
+  );
+}
+
+ReactDOM.render(<Index/>,document.getElementById('root'));
